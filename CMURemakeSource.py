@@ -129,8 +129,8 @@ class Rect:
         self.__width = width
         self.__height = height
         
-        self.fill = fill
-        self.border = 'rgba(255, 255, 255, 0)' if border == None else border
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
         self.borderWidth = borderWidth
         
         self.__calculatePoints()
@@ -167,6 +167,14 @@ class Rect:
         return self.__startY + (self.__height / 2.0)
     def __setCenterY(self, centerY):
         self.startY = centerY - (self.__height / 2.0)
+    def __getBorder(self):
+        return self.__border
+    def __setBorder(self, border):
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
+    def __getFill(self):
+        return self.__fill
+    def __setFill(self, fill):
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
     
     def __draw(self, canvas):
         if not self.visible:
@@ -185,7 +193,7 @@ class Rect:
         self.__points = [(startX, startY), (startX + width, startY), (startX + width, startY + height), (startX, startY + height)]
     
     def __area(self):
-        return width * height
+        return self.width * self.height
     
     startX = property(__getStartX, __setStartX)
     startY = property(__getStartY, __setStartY)
@@ -193,7 +201,10 @@ class Rect:
     height = property(__getHeight, __setHeight)
     centerX = property(__getCenterX, __setCenterX)
     centerY = property(__getCenterY, __setCenterY)
+    border = property(__getBorder, __setBorder)
+    fill = property(__getFill, __setFill)
     area = property(__area)
+    
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
@@ -203,8 +214,8 @@ class Circle:
         self.centerY = centerY
         self.radius = radius
         
-        self.fill = fill
-        self.border = 'rgba(255, 255, 255, 0)' if border == None else border
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
         self.borderWidth = borderWidth
         
         self.visible = True
@@ -219,10 +230,21 @@ class Circle:
     def contains(self, x, y):
         return math.sqrt(((x - self.centerX) ** 2) + ((y - self.centerY) ** 2)) <= self.radius
     
+    def __getBorder(self):
+        return self.__border
+    def __setBorder(self, border):
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
+    def __getFill(self):
+        return self.__fill
+    def __setFill(self, fill):
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+    
     def __area(self):
         return math.PI * (self.radius ** 2.0)  
 
     area = property(__area)
+    fill = property(__getFill, __setFill)
+    border = property(__getFill, __setFill)
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
@@ -230,8 +252,8 @@ class Polygon:
     def __init__(self, *args, fill=App.defaultFill, border=None, borderWidth=2):
         self.points = list(args)
         
-        self.fill = fill
-        self.border = 'rgba(255, 255, 255, 0)' if border == None else border
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
         self.borderWidth = borderWidth
         
         self.visible = True
@@ -245,9 +267,21 @@ class Polygon:
 
     def contains(self, x, y):
         raise NotImplementedError()
-        
+       
+    def __getBorder(self):
+        return self.__border
+    def __setBorder(self, border):
+        self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
+    def __getFill(self):
+        return self.__fill
+    def __setFill(self, fill):
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+    
+    border = property(__getBorder, __setBorder)
+    fill = property(__getFill, __setFill)
+    
     def __del__(self):
-        DrawScheduler.destroyShape(self.__id)   
+        DrawScheduler.destroyShape(self.__id)
 class Text:
     def __init__(self, text, centerX, centerY, size, fill=App.defaultFill):
         self.__text = text
@@ -255,7 +289,7 @@ class Text:
         self.__centerY = centerY
         self.__size = size
         
-        self.fill = fill
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
         
         self.__recalculatePoint()
         
@@ -269,6 +303,8 @@ class Text:
     
     def __width(self):
         return App.textSize(self.__text, self.size)
+    def __height(self):
+        return self.__size / 4
     
     def __getText(self):
         return self.__text
@@ -290,12 +326,18 @@ class Text:
     def __setSize(self, size):
         self.__size = size
         self.__recalculatePoint()
+    def __getFill(self):
+        return self.__fill
+    def __setFill(self, fill):
+        self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
         
     text = property(__getText, __setText)
     centerX = property(__getCenterX, __setCenterX)
     centerY = property(__getCenterY, __setCenterY)
     size = property(__getSize, __setSize)
+    fill = property(__getFill, __setFill)
     width = property(__width)
+    height = property(__height)
     
     def contains(self, x, y):
         raise NotImplementedError()
