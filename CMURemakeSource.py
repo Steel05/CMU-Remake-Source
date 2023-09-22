@@ -62,6 +62,7 @@ class DrawScheduler:
         DrawScheduler.__drawBuffer[shapeID] = lambda c : 1 + 1
 
 class App:
+    KEY_MAP = simplegui.KEY_MAP
     CHAR_MAP = {v : k.lower() for k, v in simplegui.KEY_MAP.items()}
     
     __guiFrame = None
@@ -105,9 +106,9 @@ class App:
         App.__guiFrame.set_canvas_background(color)
     
     def onMouseClick(function):
-        App.guiFrame.set_mouseclick_handler(function)
+        App.__guiFrame.set_mouseclick_handler(function)
     def onMouseDrag(function):
-        App.guiFrame.set_mousedrag_handler(function)
+        App.__guiFrame.set_mousedrag_handler(function)
 
     def onKeyDown(function):
         App.__downFunction = function
@@ -344,3 +345,23 @@ class Text:
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
+class Line:
+    def __init__(self, startX, startY, endX, endY, lineWidth, fill=App.defaultFill):
+        self.startX = startX
+        self.startY = startY
+        self.endX = endX
+        self.endY = endY
+        
+        self.lineWidth = lineWidth
+        
+        self.fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+        
+        self.__id = DrawScheduler.registerShape(self.__draw)
+        
+    def __draw(self, canvas):
+        canvas.draw_line((self.startX, self.startY), (self.endX, self.endY), self.lineWidth, self.fill)
+
+    def __del__(self):
+        DrawScheduler.destroyShape(self.__id)
+        
+App.initialize()
