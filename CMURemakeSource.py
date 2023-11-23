@@ -25,7 +25,7 @@ class Color:
     Clamps values between 0 and 100.
     :param value :- The value to clamp :- number
     :return The value after the clamping :- number
-    """    
+    """
     def clampPercent(value):
         return max(0, min(value, 100))
     
@@ -176,27 +176,66 @@ class App:
         App.__guiFrame = frame
         frame.start()
     
+    """d
+    Retrieves the window's background color.
+    :return The background color of the window :- string
+    """
     def getBackground():
         return App.__background
+    """d
+    Changes the window's background color to the provided color.
+    :param color :- The desired background color :- color, string
+    """
     def setBackground(color):
-        App.__background = color
-        App.__guiFrame.set_canvas_background(color)
+        App.__background = str(color)
+        App.__guiFrame.set_canvas_background(str(color))
     
+    """d
+    Binds a function to be called whenever the mouse is clicked.
+    :param function :- The function to be executed when the mouse is clicked. Must take in a 2-element tuple for the position in format (x, y) :- function
+    """
     def onMouseClick(function):
         App.__guiFrame.set_mouseclick_handler(function)
+    """d
+    Binds a function to be called whenever a mouse button is held down and the cursor is moved.
+    :param function :- The function to be executed when the mouse is dragged. Must take in a 2-element tuple for the position in format (x, y) :- function
+    """
     def onMouseDrag(function):
         App.__guiFrame.set_mousedrag_handler(function)
 
+    """d
+    Binds a function to be called whenever a key is pressed down.
+    :param function :- The function to be called when a key is pressed. Must take in an int for the key that was pressed, to convert between characters and numbers use App.KEY_MAP :- function
+    """
     def onKeyDown(function):
         App.__downFunction = function
+    """d
+    Binds a function to be called whenever a key is released.
+    :param function :- The function to be called when a key is released. Must take in an int for the key that was pressed, to convert between characters and numbers use App.KEY_MAP :- function
+    """
     def onKeyUp(function):
         App.__upFunction = function
+    """d
+    Binds a function to be called while a key is held.
+    :param key :- The key to bind this function to. This string must be only 1 character long :- string
+    :param function :- The function to be called while the provided key is held. This function must accept no arguments :- function
+    """
     def whileKeyDown(key, function):
         App.__keyHoldMap.update({simplegui.KEY_MAP[key] : function})
 
+    """d
+    Binds a function to be called every time the window is updated. This occurs roughly 60 times a second under ideal conditions.
+    :param function :- The function to be called every update. This function must accept no arguments :- function
+    """
     def onUpdate(function):
         App.__updateFunction = function
-        
+    
+    """d
+    Calculates the width that a string of text will take up.
+    :param text :- The text to find the width of :- string
+    :param size :- The font size of the text :- number
+    :return The width of the text :- int
+    """
     def textSize(text, size):
         return App.__guiFrame.get_canvas_textwidth(text, size)
     
