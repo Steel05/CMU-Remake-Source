@@ -1,48 +1,122 @@
 import simplegui
 import math
 
+"""d
+Contains useful functions for clamping values for use various color spaces.
+"""
 class Color:
+    """d
+    Casts values to integers and clamps them between 0 and 255.
+    :param value :- The value to clamp :- number
+    :return The value after the clamping :- int
+    """
     def clamp8Bit(value):
         return max(0, min(int(value), 255))
+    
+    """d
+    Clamps values between 0 and 1.
+    :param value :- The value to clamp :- number
+    :return The value after the clamping :- float
+    """
     def clampDecimal(value):
-        return max(0.0, min(value, 1.0))
+        return max(0.0, min(float(value), 1.0))
+    
+    """d
+    Clamps values between 0 and 100.
+    :param value :- The value to clamp :- number
+    :return The value after the clamping :- number
+    """    
     def clampPercent(value):
         return max(0, min(value, 100))
+    
+    """d
+    Clamps values between 0 and 360.
+    :param value :- The value to clamp :- number
+    :return The value after the clamping :- number
+    """
     def clampDegrees(value):
         return max(0, min(value, 360))
     
+"""d
+Represents a color in the RGB color space.
+"""
 class RGB:
+    """d
+    Constructs an RGB color.
+    :param r :- The red value of the color, clamped using Color.clamp8Bit() :- number
+    :param g :- The greed value of the color, clamped using Color.clamp8Bit() :- number
+    :param b :- The blue value of the color, clamped using Color.clamp8Bit() :- number
+    """
     def __init__(self, r, g, b):
         self.r = Color.clamp8Bit(r)
         self.g = Color.clamp8Bit(g)
         self.b = Color.clamp8Bit(b)
 
+    """d
+    [CAST] Converts the color to a valid HTML color string in format rgb(r, g, b)
+    """
     def __str__(self):
         return f"rgb({self.r}, {self.g}, {self.b})"
+"""d
+Represents a color in the RGB color space while allowing for transparency.
+"""
 class RGBA:
+    """d
+    Constructs an RGBA color.
+    :param r :- The red value of the color, clamped using Color.clamp8Bit() :- number
+    :param g :- The greed value of the color, clamped using Color.clamp8Bit() :- number
+    :param b :- The blue value of the color, clamped using Color.clamp8Bit() :- number
+    :param a :- The alpha, or opacity, of the color, clamped using Color.clampDecimal() :- float
+    """
     def __init__(self, r, g, b, a):
         self.r = Color.clamp8Bit(r)
         self.g = Color.clamp8Bit(g)
         self.b = Color.clamp8Bit(b)
         self.a = Color.clampDecimal(a)
-    
+        
+    """d
+    [CAST] Converts the color to a valid HTML color string in format rgba(r, g, b, a)
+    """
     def __str__(self):
-        return f"rgb({self.r}, {self.g}, {self.b}, {self.a})"
+        return f"rgba({self.r}, {self.g}, {self.b}, {self.a})"
+"""d
+Represents a color in the HSL color space.
+"""
 class HSL:
+    """d
+    Constructs an HSL color.
+    :param h :- The hue of the color, clamped using Color.clampDegrees() :- number
+    :param s :- The saturation of the color, clamped using Color.clampPercent() :- number
+    :param l :- The luminosity of the color, clamped using Color.clampPercent() :- number
+    """
     def __init__(self, h, s, l):
         self.h = Color.clampDegrees(h)
         self.s = Color.clampPercent(s)
         self.l = Color.clampPercent(l)
-    
+    """d
+    [CAST] Converts the color to a valid HTML color string in format hsl(h, s, l)
+    """
     def __str__(self):
         return f"HSL({self.h}, {self.s}%, {self.l}%)"    
+"""d
+Represents a color in the HSL color space while allowing for transparency.
+"""
 class HSLA:
+    """d
+    Constructs an HSL color.
+    :param h :- The hue of the color, clamped using Color.clampDegrees() :- number
+    :param s :- The saturation of the color, clamped using Color.clampPercent() :- number
+    :param l :- The luminosity of the color, clamped using Color.clampPercent() :- number
+    :param a :- The alpha, or opacity, of the color, clamped using Color.clampDecimal() :- float
+    """
     def __init__(self, h, s, l, a):
         self.h = Color.clampDegrees(h)
         self.s = Color.clampPercent(s)
         self.l = Color.clampPercent(l)
         self.a = Color.clampDecimal(a)
-    
+    """d
+    [CAST] Converts the color to a valid HTML color string in format hsla(h, s, l, a)
+    """
     def __str__(self):
         return f"hsl({self.h}, {self.s}%, {self.l}%, {self.a})"  
     
@@ -61,6 +135,9 @@ class DrawScheduler:
         print(f"Destroying: {shapeID} with length {len(DrawScheduler.__drawBuffer)}")
         DrawScheduler.__drawBuffer[shapeID] = lambda c : 1 + 1
 
+"""d
+Contains functions for interacting with the application window and controls.
+"""
 class App:
     KEY_MAP = simplegui.KEY_MAP
     CHAR_MAP = {v : k.lower() for k, v in simplegui.KEY_MAP.items()}
