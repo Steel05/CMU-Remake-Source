@@ -238,8 +238,21 @@ class App:
     """
     def textSize(text, size):
         return App.__guiFrame.get_canvas_textwidth(text, size)
-    
+
+"""d
+Represents a rectangle in the screenspace of the application window.
+"""
 class Rect:
+    """d
+    Constructs a rectangle with the provided paramaters.
+    :param startX :- The x-coordinate of the 'top-left' corner of the rectangle :- number
+    :param startY :- The y-coordinate of the 'top-left' corner of the rectangle :- number
+    :param width :- The width, or size along the x-axis, of the rectangle :- number
+    :param height :- The height, or size along the y-axis of the rectangle :- number
+    :param fill=App.defaultFill :- [Optional] The fill color of the rectangle :- color, string
+    :param border=None :- [Optional] The color of the border of the rectangle :- color, string
+    :param borderWidth=2 :- [Optional] The width of the border in pixels :- number
+    """
     def __init__(self, startX, startY, width, height, fill=App.defaultFill, border=None, borderWidth=2):
         self.__startX = startX
         self.__startY = startY
@@ -298,6 +311,12 @@ class Rect:
             return
         canvas.draw_polygon(self.__points, self.borderWidth, str(self.border), str(self.fill))
 
+    """d
+    Checks if the provided coordinate is contained within the rectangle.
+    :param x :- The x value of the coordinate to check :- number
+    :param y :- The y value of the coordinate to check :- number
+    :return Whether or not the coordinate is contained within the rectangle :- bool
+    """
     def contains(self, x, y):
         return x >= self.startX and x <= self.points[1][0] and y >= self.startY and y <= self.points[3][1]
     
@@ -325,7 +344,19 @@ class Rect:
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
+"""d
+Represents a circle in the screenspace of the application window
+"""
 class Circle:
+    """d
+    Constructs a circle with the provided parameters.
+    :param centerX :- The center of the circle along the x-axis :- number
+    :param centerY :- The center of the circle along the y- axis :- number
+    :param radius :- The radius of the circle :- number
+    :param fill=App.defaultFill :- [Optional] The fill color of the rectangle :- color, string
+    :param border=None :- [Optional] The color of the border of the rectangle :- color, string
+    :param borderWidth=2 :- [Optional] The width of the border in pixels :- number
+    """
     def __init__(self, centerX, centerY, radius, fill=App.defaultFill, border=None, borderWidth=2):
         self.centerX = centerX
         self.centerY = centerY
@@ -344,6 +375,12 @@ class Circle:
             return
         canvas.draw_circle((self.centerX, self.centerY), self.radius, self.borderWidth, str(self.border), str(self.fill))
     
+    """d
+    Checks if the provided coordinate is contained within the circle.
+    :param x :- The x value of the coordinate to check :- number
+    :param y :- The y value of the coordinate to check :- number
+    :return Whether or not the coordinate is contained within the circle :- bool
+    """
     def contains(self, x, y):
         return math.sqrt(((x - self.centerX) ** 2) + ((y - self.centerY) ** 2)) <= self.radius
     
@@ -365,9 +402,12 @@ class Circle:
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
+"""d
+Represents a polygon in the screenspace of the application window
+"""
 class Polygon:
     def __init__(self, *args, fill=App.defaultFill, border=None, borderWidth=2):
-        self.points = list(args)
+        self.__points = list(args)
         
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
         self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
@@ -375,16 +415,69 @@ class Polygon:
         
         self.visible = True
         
+        self.__calcProperties()
+
         self.__id = DrawScheduler.registerShape(self.__draw)
         
+    def __calcProperties(self):
+        centerX = 0
+        centerY = 0
+
+        xMinMax = [510,-10]
+        yMinMax = [510,-10]
+
+        l = len(self.__points)
+
+        for point in self.__points:
+            centerX += point[0]
+            centerY += point[1]
+
+            if point[0] > xMinMax[1]:
+                xMinMax[1] = point[0]
+            if point[0] < xMinMax[0]:
+                xMinMax[0] = point[0]
+
+            if point[1] > yMinMax[1]:
+                yMinMax[1] = point[1]
+            if point[1] < yMinMax[0]:
+                yMinMax[0] = point[1]
+
+        self.__centerX = int(centerX / l)
+        self.__centerY = int(centerY / l)
+
+        self.__xMinMax = xMinMax
+        self.__yMinMax = yMinMax
+    def __offsetPoints(self, newCenter):
+        for i in range(len(self.__points)):
+            offX, offY = self.__points[i][0] - self.__centerX, self.__points[i][1] - self.__centerY
+            self.__points[i] = (newCenter[0] + offX, newCenter[1] + offY)
+
     def __draw(self, canvas):
         if not self.visible:
             return
-        canvas.draw_polygon(self.points, self.borderWidth, str(self.border), str(self.fill))
+        canvas.draw_polygon(self.__points, self.borderWidth, str(self.border), str(self.fill))
 
+    """d
+    [NOT YET IMPLEMENTED]
+    """
     def contains(self, x, y):
-        raise NotImplementedError()
-       
+        boundX = x >= self.__xMinMax[0] and x <= self.__xMinMax[1]
+        boundY = y >= self.__yMinMax[0] and y <= self.__yMinMax[1]
+        
+        if not (boundX and boundY):
+            return False
+        
+        for i in range(len(self.__points)):
+            a = self.__points[i]
+            b = self.__points[i-1]
+            
+            m = (a[1] - b[1]) / (a[0] - b[0])
+            
+            if not ((y - b[1]) >= (m * (x - b[0]))):
+                return False
+            
+            return True
+            
     def __getBorder(self):
         return self.__border
     def __setBorder(self, border):
@@ -393,12 +486,30 @@ class Polygon:
         return self.__fill
     def __setFill(self, fill):
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
-    
+    def __getCenterX(self):
+        return self.__centerX
+    def __setCenterX(self, centerX):
+        self.__offsetPoints((centerX, self.__centerY))
+        self.__centerX = centerX
+    def __getCenterY(self):
+        return self.__centerY
+    def __setCenterY(self, centerY):
+        self.__offsetPoints((self.__centerX, centerY))
+        self.__centerY = centerY
+    def __getPoints(self):
+        return self.__points
+
     border = property(__getBorder, __setBorder)
     fill = property(__getFill, __setFill)
+    centerX = property(__getCenterX, __setCenterX)
+    centerY = property(__getCenterY, __setCenterY)
+    points = property(__getPoints)
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
+"""d
+Represents a string of text in the screenspace of the application window
+"""
 class Text:
     def __init__(self, text, centerX, centerY, size, fill=App.defaultFill):
         self.__text = text
