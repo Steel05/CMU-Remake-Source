@@ -458,7 +458,10 @@ class Polygon:
         canvas.draw_polygon(self.__points, self.borderWidth, str(self.border), str(self.fill))
 
     """d
-    [NOT YET IMPLEMENTED]
+    Checks if the provided coordinate is contained within the polygon.
+    :param x :- The x value of the coordinate to check :- number
+    :param y :- The y value of the coordinate to check :- number
+    :return Whether or not the coordinate is contained within the polygon :- bool
     """
     def contains(self, x, y):
         boundX = x >= self.__xMinMax[0] and x <= self.__xMinMax[1]
@@ -593,6 +596,9 @@ class Text:
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
+"""d
+Represents a line in the screenspace of the application window
+"""
 class Line:
     def __init__(self, startX, startY, endX, endY, lineWidth, fill=App.defaultFill):
         self.startX = startX
