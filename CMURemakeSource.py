@@ -464,19 +464,40 @@ class Polygon:
         boundX = x >= self.__xMinMax[0] and x <= self.__xMinMax[1]
         boundY = y >= self.__yMinMax[0] and y <= self.__yMinMax[1]
         
+        # Major bounding box
         if not (boundX and boundY):
             return False
         
-        for i in range(len(self.__points)):
+        hits = 0
+        for i in range(0, len(self.__points)):
             a = self.__points[i]
             b = self.__points[i-1]
             
-            m = (a[1] - b[1]) / (a[0] - b[0])
+            # Constraint on vertical position
+            if  y < min(a[1], b[1]) or y > max(a[1], b[1]):
+                continue
+                
+            rise = a[1] - b[1]
+            run = a[0] - b[0]
             
-            if not ((y - b[1]) >= (m * (x - b[0]))):
-                return False
+            # Vertical line case
+            if run == 0:
+                if a[0] < x:
+                    continue
+                hits += 1
+                continue
+                
+            # Horizontal line case
+            if rise == 0:
+                continue
             
-            return True
+            m = rise / run
+            
+            solvedX = ((y - a[1]) / m) + a[0]
+            if solvedX >= x:
+                hits += 1
+            
+        return (hits % 2) == 1
             
     def __getBorder(self):
         return self.__border
