@@ -753,6 +753,7 @@ class Text:
     width = property(__width)
     """d
     The height, or size along the y-axis, of the text.
+    :type number
     """
     height = property(__height)
     
