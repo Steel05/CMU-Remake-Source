@@ -261,7 +261,7 @@ class Rect:
         
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
         self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
-        self.borderWidth = borderWidth
+        self.__borderWidth = borderWidth
         
         self.__calculatePoints()
         
@@ -305,7 +305,12 @@ class Rect:
         return self.__fill
     def __setFill(self, fill):
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
-    
+    def __getBorderWidth(self):
+        return self.__borderWidth
+    def __setBorderWidth(self, width):
+        self.__borderWidth = width
+
+
     def __draw(self, canvas):
         if not self.visible:
             return
@@ -331,14 +336,55 @@ class Rect:
     def __area(self):
         return self.width * self.height
     
+    """d
+    The x-coordinate of the 'top-left' corner of the rectangle.
+    :type number
+    """
     startX = property(__getStartX, __setStartX)
+    """d
+    The y-coordinate of the 'top-left' corner of the rectangle.
+    :type number
+    """
     startY = property(__getStartY, __setStartY)
+    """d
+    The width, or size along the x-axis, of the rectangle.
+    :type number
+    """
     width = property(__getWidth, __setWidth)
+    """d
+    The height, or size along the y-axis, of the rectangle.
+    :type number
+    """
     height = property(__getHeight, __setHeight)
+    """d
+    The x-coordinate of the center point of the rectangle.
+    :type number
+    """
     centerX = property(__getCenterX, __setCenterX)
+    """d
+    The y-coordinate of the center point of the rectangle.
+    :type number
+    """
     centerY = property(__getCenterY, __setCenterY)
-    border = property(__getBorder, __setBorder)
+    """d
+    The fill color of rectangle.
+    :type color, string
+    """
     fill = property(__getFill, __setFill)
+    """d
+    The color of the border of the rectangle.
+    :type color, string
+    """
+    border = property(__getBorder, __setBorder)
+    """d
+    The width of the border of the rectangle.
+    :type number
+    """
+    borderWidth = property(__getBorderWidth, __setBorderWidth)
+    """d
+    The area encased, or the number of pixels occupied, by this rectangle.
+    :type number
+    """
     area = property(__area)
     
     
@@ -358,13 +404,13 @@ class Circle:
     :param borderWidth=2 :- [Optional] The width of the border in pixels :- number
     """
     def __init__(self, centerX, centerY, radius, fill=App.defaultFill, border=None, borderWidth=2):
-        self.centerX = centerX
-        self.centerY = centerY
-        self.radius = radius
+        self.__centerX = centerX
+        self.__centerY = centerY
+        self.__radius = radius
         
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
         self.__border = 'rgba(255, 255, 255, 0)' if border == None else border
-        self.borderWidth = borderWidth
+        self.__borderWidth = borderWidth
         
         self.visible = True
         
@@ -384,6 +430,18 @@ class Circle:
     def contains(self, x, y):
         return math.sqrt(((x - self.centerX) ** 2) + ((y - self.centerY) ** 2)) <= self.radius
     
+    def __getCenterX(self):
+        return self.__centerX
+    def __setCenterX(self, centerX):
+        self.__centerX = centerX
+    def __getCenterY(self):
+        return self.__centerY
+    def __setCenterY(self, centerY):
+        self.__centerY = centerY
+    def __getRadius(self):
+        return self.__radius
+    def __setRadius(self, radius):
+        self.__radius = radius
     def __getBorder(self):
         return self.__border
     def __setBorder(self, border):
@@ -392,13 +450,49 @@ class Circle:
         return self.__fill
     def __setFill(self, fill):
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
-    
+    def __getBorderWidth(self):
+        return self.__borderWidth
+    def __setBorderWidth(self, width):
+        self.__borderWidth = width
+
     def __area(self):
         return math.PI * (self.radius ** 2.0)  
 
-    area = property(__area)
+    """d
+    The x-coordinate of the center point of the circle.
+    :type number
+    """
+    centerX = property(__getCenterX, __setCenterX)
+    """d
+    The y-coordinate of the center point of the circle.
+    :type number
+    """
+    centerY = property(__getCenterY, __setCenterY)
+    """d
+    The radius of the circle.
+    :type number
+    """
+    radius = property(__getRadius, __setRadius)
+    """d
+    The fill color of circle.
+    :type color, string
+    """
     fill = property(__getFill, __setFill)
-    border = property(__getFill, __setFill)
+    """d
+    The color of the border of the circle.
+    :type color, string
+    """
+    border = property(__getBorder, __setBorder)
+    """d
+    The width of the border of the circle.
+    :type number
+    """
+    borderWidth = property(__getBorderWidth, __setBorderWidth)
+    """d
+    The area encased, or the number of pixels occupied, by this circle.
+    :type float
+    """
+    area = property(__area)
     
     def __del__(self):
         DrawScheduler.destroyShape(self.__id)
@@ -406,6 +500,13 @@ class Circle:
 Represents a polygon in the screenspace of the application window
 """
 class Polygon:
+    """d
+    Constructs a polygon with the provided parameters.
+    :param points :- The points to describe the polygon :- list[tuple]
+    :param fill=App.defaultFill :- [Optional] The fill color of the rectangle :- color, string
+    :param border=None :- [Optional] The color of the border of the rectangle :- color, string
+    :param borderWidth=2 :- [Optional] The width of the border in pixels :- number
+    """
     def __init__(self, *args, fill=App.defaultFill, border=None, borderWidth=2):
         self.__points = list(args)
         
@@ -510,6 +611,10 @@ class Polygon:
         return self.__fill
     def __setFill(self, fill):
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
+    def __getBorderWidth(self):
+        return self.__borderWidth
+    def __setBorderWidth(self, width):
+        self.__borderWidth = width
     def __getCenterX(self):
         return self.__centerX
     def __setCenterX(self, centerX):
@@ -523,10 +628,35 @@ class Polygon:
     def __getPoints(self):
         return self.__points
 
-    border = property(__getBorder, __setBorder)
+    """d
+    The fill color of polygon.
+    :type color, string
+    """
     fill = property(__getFill, __setFill)
+    """d
+    The color of the border of the polygon.
+    :type color, string
+    """
+    border = property(__getBorder, __setBorder)
+    """d
+    The width of the border of the polygon.
+    :type number
+    """
+    borderWidth = property(__getBorderWidth, __setBorderWidth)
+    """d
+    The x-coordinate of the center of the polygon.
+    :type number
+    """
     centerX = property(__getCenterX, __setCenterX)
+    """d
+    The y-coordinate of the center of the polygon.
+    :type number
+    """
     centerY = property(__getCenterY, __setCenterY)
+    """d
+    The points that describe the polygon.
+    :type list[tuple]
+    """
     points = property(__getPoints)
     
     def __del__(self):
@@ -535,6 +665,14 @@ class Polygon:
 Represents a string of text in the screenspace of the application window
 """
 class Text:
+    """d
+    Constructs a text object with the provided parameters.
+    :param text :- The text for this shape to display :- string
+    :param centerX :- The x-coordinate of the center of this shape :- number
+    :param centerY :- The y-coordinate of the center of this shape :- number
+    :param size :- The size of the font to render the text :- number
+    :param fill=App.defaultFill :- [Optional] The fill color of the rectangle :- color, string
+    """
     def __init__(self, text, centerX, centerY, size, fill=App.defaultFill):
         self.__text = text
         self.__centerX = centerX
@@ -582,13 +720,40 @@ class Text:
         return self.__fill
     def __setFill(self, fill):
         self.__fill = 'rgba(255, 255, 255, 0)' if fill == None else fill
-        
+    
+    """d
+    The text displayed by this shape.
+    :type string
+    """
     text = property(__getText, __setText)
+    """d
+    The x-coordinate of the center of this shape.
+    :type number
+    """
     centerX = property(__getCenterX, __setCenterX)
+    """d
+    The y-coordinate of the center of this shape.
+    :type number
+    """
     centerY = property(__getCenterY, __setCenterY)
+    """d
+    The size of the font for the text.
+    :type number
+    """
     size = property(__getSize, __setSize)
+    """d
+    The fill color of the text.
+    :type color, string
+    """
     fill = property(__getFill, __setFill)
+    """d
+    The width, or size along the x-axis, of the text.
+    :type number
+    """
     width = property(__width)
+    """d
+    The height, or size along the y-axis, of the text.
+    """
     height = property(__height)
     
     def contains(self, x, y):
